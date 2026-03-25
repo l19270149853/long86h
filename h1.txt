@@ -14,9 +14,7 @@
 1A14,http://btblxbw.x3322.net:8082/hls/14/index.m3u8
 1A15,http://btblxbw.x3322.net:8082/hls/15/index.m3u8
 1A16,http://btblxbw.x3322.net:8082/hls/16/index.m3u8
-1A17,http://btblxbw.x3322.net:8082/hls/17/index.m3u8
 1A18,http://btblxbw.x3322.net:8082/hls/18/index.m3u8
-1A19,http://btblxbw.x3322.net:8082/hls/19/index.m3u8
 1A20,http://btblxbw.x3322.net:8082/hls/20/index.m3u8
 1A21,http://btblxbw.x3322.net:8082/hls/21/index.m3u8
 1A22,http://btblxbw.x3322.net:8082/hls/22/index.m3u8
