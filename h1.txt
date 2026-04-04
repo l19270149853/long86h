@@ -21,6 +21,7 @@
 1A21,http://btblxbw.x3322.net:8082/hls/21/index.m3u8
 1A22,http://btblxbw.x3322.net:8082/hls/22/index.m3u8
 1A23,http://btblxbw.x3322.net:8082/hls/23/index.m3u8
+1A24,http://btblxbw.x3322.net:8082/hls/24/index.m3u8
 1A25,http://btblxbw.x3322.net:8082/hls/25/index.m3u8
 1A26,http://btblxbw.x3322.net:8082/hls/26/index.m3u8
 1A27,http://btblxbw.x3322.net:8082/hls/27/index.m3u8
@@ -32,6 +33,7 @@
 1A33,http://btblxbw.x3322.net:8082/hls/33/index.m3u8
 1A34,http://btblxbw.x3322.net:8082/hls/34/index.m3u8
 1A35,http://btblxbw.x3322.net:8082/hls/35/index.m3u8
+1A36,http://btblxbw.x3322.net:8082/hls/36/index.m3u8
 1A37,http://btblxbw.x3322.net:8082/hls/37/index.m3u8
 1A38,http://btblxbw.x3322.net:8082/hls/38/index.m3u8
 1A39,http://btblxbw.x3322.net:8082/hls/39/index.m3u8
