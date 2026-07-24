@@ -121,7 +121,7 @@ def save_urls_to_file(urls, filename):
     logging.info(f"已保存 {len(urls)} 个有效地址到 {filename}")
 
 def main():
-    file_url = "https://d.kstore.dev/download/10694/hlstvid.txt"
+    file_url = "https://10694.kstore.space/hlstvid.txt"
     output_file = "h1.txt"
     final_output_file = "h2.txt"
 
