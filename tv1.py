@@ -1,160 +1,148 @@
+# -*- coding: utf-8 -*-
+# HLS 直播源自动扫描器 v2 (重写版)
+# 名单里是一批同型 HLS 服务器 (频道地址统一为 /hls/<编号>/index.m3u8),
+# 本脚本: 拉名单 -> 抠服务器地址 -> 并发探活 -> 并发爆破频道编号 -> 输出清单。
+#
+# 相比旧版的改动 (旧版慢的原因全在串行):
+#   1. 爆破改全程多线程 (旧版 process_line 是单线程硬扫, 一个服务器最坏几分钟)
+#   2. 验真: 只认返回内容带 #EXTM3U 的地址 (旧版只看状态码+测速, 假页面也算活,
+#      而且它测的 1~2KB 播放列表"速度"其实只是连接延迟, 测了个寂寞)
+#   3. 砍掉旧版结尾对 h1 的重复第二遍扫描 (同一个服务器有几个频道就被重扫几遍)
+#   4. 地址正则放宽: https 也认, 端口 1~5 位 (旧版 5 位端口如 10088 会被漏掉)
+#   5. 两段式扫描: 先并发试每台的 1~20 号, 全灭的服务器直接放弃, 不浪费后面的爆破
+#
+# 输出: h1.txt, 每行 "服务器序号A频道号,地址" (占位名, 台名需对着画面认)
 import re
 import time
 import logging
-import requests
-import os
+import threading
 from concurrent.futures import ThreadPoolExecutor
 
-# 配置日志
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+import requests
 
-def download_file(url):
+# ---------------- 配置 ----------------
+SRC_URL = "https://10694.kstore.space/hlstvid.txt"   # 名单地址
+OUT_FILE = "h1.txt"                                  # 输出文件
+WORKERS = 100          # 并发线程数 (名单大可调高, 服务器弱可调低)
+TIMEOUT = (2, 3)       # (连接超时, 读取超时) 秒
+FIRST_RANGE = 20       # 探活段: 先试每台的 1~20 号
+SCAN_RANGE = 100       # 爆破段: 活服务器扫到 100 号
+EXT_STEP = 50          # 延伸段: 上一段有命中就再往后扫 50 个
+MAX_I = 300            # 频道编号上限
+UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s - %(levelname)s - %(message)s")
+
+BASE_RE = re.compile(
+    r'https?://(?:(?:\d{1,3}\.){3}\d{1,3}|(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,})'
+    r'(?::\d{1,5})?')
+
+_local = threading.local()
+
+
+def _session():
+    s = getattr(_local, "s", None)
+    if s is None:
+        s = requests.Session()
+        s.trust_env = False  # 扫描器直连, 不吃环境变量里的代理设置
+        s.headers.update({"User-Agent": UA})
+        _local.s = s
+    return s
+
+
+def probe(url):
+    """命中返回 url, 否则 None。只认真 m3u8: 状态 200 且内容带 #EXTM3U。"""
     try:
-        response = requests.get(url)
-        response.raise_for_status()
-        return response.text
-    except requests.RequestException as e:
-        logging.error(f"下载文件失败: {e}")
+        r = _session().get(url, stream=True, timeout=TIMEOUT)
+        try:
+            if r.status_code != 200:
+                return None
+            head = b""
+            for chunk in r.iter_content(chunk_size=2048):
+                if chunk:
+                    head += chunk
+                if len(head) >= 2048:
+                    break
+            return url if b"#EXTM3U" in head else None
+        finally:
+            r.close()
+    except requests.RequestException:
         return None
 
-def extract_urls(text):
-    pattern = re.compile(
-        r'http://(?:(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,})(?::\d{1,4})(?=/|$)',
-        re.IGNORECASE
-    )
-    return pattern.findall(text)
 
-def check_video_speed(url, timeout=3, duration=3, min_speed=0.1):
-    try:
-        start_time = time.time()
-        response = requests.get(url, stream=True, timeout=timeout)
-        response.raise_for_status()
+def chan_url(base, i):
+    return "%s/hls/%d/index.m3u8" % (base, i)
 
-        downloaded_size = 0
-        for chunk in response.iter_content(chunk_size=1024):
-            if chunk:
-                downloaded_size += len(chunk)
-                if time.time() - start_time >= duration:
-                    break
 
-        elapsed_time = time.time() - start_time
-        if elapsed_time == 0:
-            return None
+def sweep(tasks):
+    """tasks: [(base, i), ...] -> {base: set(i)} 全部并发跑完"""
+    hits = {}
+    if not tasks:
+        return hits
+    with ThreadPoolExecutor(max_workers=WORKERS) as ex:
+        results = ex.map(lambda t: (t[0], t[1], probe(chan_url(t[0], t[1]))),
+                         tasks)
+        for base, i, ok in results:
+            if ok:
+                hits.setdefault(base, set()).add(i)
+    return hits
 
-        speed = (downloaded_size / 1024) / elapsed_time  # KB/s
-        if speed >= min_speed:
-            return url.rstrip('/')
-        else:
-            logging.warning(f"无效地址: {url} (网速: {speed:.2f} KB/s)")
-    except requests.RequestException as e:
-        logging.error(f"请求失败: {url} (错误: {e})")
-    return None
-
-def extract_base_url(url):
-    pattern = re.compile(r"(http://[^/]+)")
-    match = pattern.match(url)
-    return match.group(1) if match else None
-
-def validate_urls(urls, num_threads=20):
-    valid_urls = []
-    with ThreadPoolExecutor(max_workers=num_threads) as executor:
-        future_url_dict = {}
-        for url in urls:
-            future = executor.submit(check_video_speed, url)
-            future_url_dict[future] = url
-
-        for future in future_url_dict:
-            result = future.result()
-            if result:
-                valid_urls.append(result)
-            else:
-                url = future_url_dict[future]
-                base_url = extract_base_url(url)
-                if base_url:
-                    for i in range(1, 21):
-                        new_url = f"{base_url}/hls/{i}/index.m3u8"
-                        new_result = check_video_speed(new_url)
-                        if new_result:
-                            valid_urls.append(new_result)
-                            break
-    return valid_urls
-
-def process_line(index, base_url):
-    results = []
-    current_start = 1
-    current_end = 100
-    max_i = 200
-
-    while True:
-        for i in range(current_start, current_end + 1):
-            new_index = f"{index}A{i}"
-            new_url = f"{base_url}/hls/{i}/index.m3u8"
-            result = check_video_speed(new_url)
-            if result:
-                results.append(f"{new_index},{result}")
-
-        # 检查最后5个i是否有有效地址
-        last_five_start = max(current_start, current_end - 4)
-        has_valid = any(
-            any(entry.startswith(f"{index}A{i}") for entry in results)
-            for i in range(last_five_start, current_end + 1)
-        )
-
-        if has_valid and current_end < max_i:
-            next_start = current_end + 1
-            next_end = min(current_end + 20, max_i)
-            current_start, current_end = next_start, next_end
-        else:
-            break
-
-    return results
-
-def save_urls_to_file(urls, filename):
-    with open(filename, "w") as file:
-        for index, url in enumerate(urls, start=1):
-            match = re.match(r'http://([^/]+)', url)
-            if match:
-                base_url = match.group(0)
-                processed_lines = process_line(index, base_url)
-                for line in processed_lines:
-                    file.write(line + "\n")
-    logging.info(f"已保存 {len(urls)} 个有效地址到 {filename}")
 
 def main():
-    file_url = "https://10694.kstore.space/hlstvid.txt"
-    output_file = "h1.txt"
-    final_output_file = "h2.txt"
-
-    logging.info(f"当前工作目录: {os.getcwd()}")
-
-    if (content := download_file(file_url)) is not None:
-        raw_urls = list(set(extract_urls(content)))
-        logging.info(f"发现 {len(raw_urls)} 个待验证地址")
-
-        valid_urls = validate_urls(raw_urls)
-
-        if valid_urls:
-            save_urls_to_file(valid_urls, output_file)
-        else:
-            logging.warning("未找到有效地址")
-
+    t0 = time.time()
+    logging.info("下载名单: %s", SRC_URL)
     try:
-        logging.info(f"正在处理生成的新地址并保存到 {final_output_file}")
-        with open(output_file, "r") as infile, open(final_output_file, "w") as outfile:
-            for line in infile:
-                line = line.strip()
-                if not line:
-                    continue
-                match = re.match(r"(\d+),http://(.+?)/hls/\d+/index\.m3u8", line)
-                if match:
-                    idx, base = match.groups()
-                    base_url = f"http://{base}"
-                    processed = process_line(idx, base_url)
-                    for entry in processed:
-                        outfile.write(entry + "\n")
-        logging.info(f"处理完成，结果已保存到 {final_output_file}")
-    except Exception as e:
-        logging.error(f"处理文件时出错: {e}")
+        text = requests.get(SRC_URL, timeout=15,
+                            headers={"User-Agent": UA}).text
+    except requests.RequestException as e:
+        logging.error("名单下载失败: %s", e)
+        return
+
+    bases, seen = [], set()
+    for m in BASE_RE.finditer(text):
+        b = m.group(0).rstrip("/")
+        if b not in seen:
+            seen.add(b)
+            bases.append(b)
+    logging.info("名单里共 %d 台服务器", len(bases))
+    if not bases:
+        return
+
+    # 第一段: 每台试 1~20 号, 全灭的直接放弃
+    hits = sweep([(b, i) for b in bases for i in range(1, FIRST_RANGE + 1)])
+    alive = [b for b in bases if b in hits]
+    logging.info("探活: %d 台有频道 (%.1fs)", len(alive), time.time() - t0)
+
+    # 第二段: 活服务器扫 21~100 号
+    more = sweep([(b, i) for b in alive
+                  for i in range(FIRST_RANGE + 1, SCAN_RANGE + 1)])
+    for b, s in more.items():
+        hits.setdefault(b, set()).update(s)
+
+    # 延伸段: 上一段 (最后 50 个号) 还有命中就再往后扫一段, 到 MAX_I 为止
+    start = SCAN_RANGE + 1
+    while start <= MAX_I:
+        end = min(start + EXT_STEP - 1, MAX_I)
+        cand = [b for b in alive
+                if any(start - EXT_STEP <= i < start for i in hits.get(b, ()))]
+        if not cand:
+            break
+        more = sweep([(b, i) for b in cand for i in range(start, end + 1)])
+        for b, s in more.items():
+            hits.setdefault(b, set()).update(s)
+        logging.info("延伸 %d~%d: %d 台仍在出频道", start, end, len(more))
+        start = end + 1
+
+    lines = []
+    for idx, b in enumerate(bases, start=1):
+        for i in sorted(hits.get(b, ())):
+            lines.append("%dA%d,%s" % (idx, i, chan_url(b, i)))
+    with open(OUT_FILE, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + ("\n" if lines else ""))
+    logging.info("完成: %d 台活服务器, %d 个频道 -> %s (总耗时 %.1fs)",
+                 len(alive), len(lines), OUT_FILE, time.time() - t0)
+
 
 if __name__ == "__main__":
     main()
