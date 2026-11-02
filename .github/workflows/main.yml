@@ -1,48 +1,48 @@
-name: TV List Updater
+# HLS 直播源自动扫描 —— 放到仓库的 .github/workflows/scan.yml
+# 手动触发 (Actions 页点 Run workflow) 或每天定时跑一次,
+# 跑完把 h1.txt 自动提交回仓库, 同时存一份 artifact 可下载。
+name: HLS Scan
 
 on:
-  workflow_dispatch:
-  push:
-    branches: [main]
-    paths-ignore: ['h1.txt', 'h2.txt']
+  workflow_dispatch:        # 手动触发
   schedule:
-    - cron: "0 */12 * * *"
+    - cron: "0 20 * * *"    # 每天 UTC 20:00 = 北京时间凌晨 4:00, 不想定时删掉这段
+
+permissions:
+  contents: write           # 提交 h1.txt 回仓库需要写权限
 
 jobs:
-  update-list:
+  scan:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
+    timeout-minutes: 60     # 防止挂死烧时长
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+      - name: 拉取仓库
+        uses: actions/checkout@v4
 
-    - name: Configure Git
-      run: |
-        git config --global user.name "l19270149853"
-        git config --global user.email "362213335lkh@gmail.com"
+      - name: 装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: 装依赖
+        run: pip install requests
 
-    - name: Install dependencies
-      run: pip install requests
+      - name: 运行扫描
+        # 脚本不在仓库根目录就改这里的路径, 比如 python tools/hls_scan.py
+        run: python hls_scan.py
 
-    - name: Run test script
-      run: python tv1.py
+      - name: 提交结果回仓库
+        run: |
+          git config user.name "l19270149853"
+          git config user.email "362213335lkh@gmail.com"
+          git add h1.txt
+          git diff --cached --quiet || git commit -m "更新扫描结果 $(date +'%Y-%m-%d %H:%M')"
+          git push
 
-    - name: Commit changes
-      run: |
-        git add h1.txt h2.txt
-        # 仅在检测到文件变化时提交
-        if ! git diff --quiet || ! git diff --staged --quiet; then
-          git commit -m "Auto-update h1.txt and h2.txt [skip ci]"
-        fi
-
-    - name: Force Push changes
-      run: git push -f origin main
+      - name: 同时存一份 artifact (提交失败时也能下载)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hls-result
+          path: h1.txt
+          retention-days: 7
