@@ -80,8 +80,6 @@
 6A40,http://183.11.239.36:808/hls/40/index.m3u8
 6A41,http://183.11.239.36:808/hls/41/index.m3u8
 6A42,http://183.11.239.36:808/hls/42/index.m3u8
-6A43,http://183.11.239.36:808/hls/43/index.m3u8
-6A44,http://183.11.239.36:808/hls/44/index.m3u8
 6A45,http://183.11.239.36:808/hls/45/index.m3u8
 6A46,http://183.11.239.36:808/hls/46/index.m3u8
 6A47,http://183.11.239.36:808/hls/47/index.m3u8
@@ -525,6 +523,10 @@
 21A104,http://42.55.217.53:8088/hls/104/index.m3u8
 21A105,http://42.55.217.53:8088/hls/105/index.m3u8
 21A106,http://42.55.217.53:8088/hls/106/index.m3u8
+21A114,http://42.55.217.53:8088/hls/114/index.m3u8
+21A115,http://42.55.217.53:8088/hls/115/index.m3u8
+21A116,http://42.55.217.53:8088/hls/116/index.m3u8
+21A117,http://42.55.217.53:8088/hls/117/index.m3u8
 22A1,http://tv.31986666.com:801/hls/1/index.m3u8
 22A2,http://tv.31986666.com:801/hls/2/index.m3u8
 22A3,http://tv.31986666.com:801/hls/3/index.m3u8
@@ -549,7 +551,6 @@
 22A22,http://tv.31986666.com:801/hls/22/index.m3u8
 22A23,http://tv.31986666.com:801/hls/23/index.m3u8
 22A24,http://tv.31986666.com:801/hls/24/index.m3u8
-22A25,http://tv.31986666.com:801/hls/25/index.m3u8
 22A26,http://tv.31986666.com:801/hls/26/index.m3u8
 22A27,http://tv.31986666.com:801/hls/27/index.m3u8
 22A28,http://tv.31986666.com:801/hls/28/index.m3u8
