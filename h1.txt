@@ -78,8 +78,9 @@
 6A37,http://183.11.239.36:808/hls/37/index.m3u8
 6A38,http://183.11.239.36:808/hls/38/index.m3u8
 6A40,http://183.11.239.36:808/hls/40/index.m3u8
-6A41,http://183.11.239.36:808/hls/41/index.m3u8
 6A42,http://183.11.239.36:808/hls/42/index.m3u8
+6A43,http://183.11.239.36:808/hls/43/index.m3u8
+6A44,http://183.11.239.36:808/hls/44/index.m3u8
 6A45,http://183.11.239.36:808/hls/45/index.m3u8
 6A46,http://183.11.239.36:808/hls/46/index.m3u8
 6A47,http://183.11.239.36:808/hls/47/index.m3u8
@@ -92,7 +93,6 @@
 6A59,http://183.11.239.36:808/hls/59/index.m3u8
 6A60,http://183.11.239.36:808/hls/60/index.m3u8
 6A64,http://183.11.239.36:808/hls/64/index.m3u8
-6A65,http://183.11.239.36:808/hls/65/index.m3u8
 6A66,http://183.11.239.36:808/hls/66/index.m3u8
 6A67,http://183.11.239.36:808/hls/67/index.m3u8
 6A68,http://183.11.239.36:808/hls/68/index.m3u8
@@ -174,7 +174,6 @@
 8A39,http://218.63.242.244:808/hls/39/index.m3u8
 8A40,http://218.63.242.244:808/hls/40/index.m3u8
 10A1,http://119.6.121.42:8099/hls/1/index.m3u8
-10A2,http://119.6.121.42:8099/hls/2/index.m3u8
 10A3,http://119.6.121.42:8099/hls/3/index.m3u8
 10A4,http://119.6.121.42:8099/hls/4/index.m3u8
 10A5,http://119.6.121.42:8099/hls/5/index.m3u8
@@ -249,7 +248,6 @@
 11A34,http://117.139.247.14:8088/hls/34/index.m3u8
 11A35,http://117.139.247.14:8088/hls/35/index.m3u8
 12A1,http://175.154.151.98:808/hls/1/index.m3u8
-12A2,http://175.154.151.98:808/hls/2/index.m3u8
 12A3,http://175.154.151.98:808/hls/3/index.m3u8
 12A4,http://175.154.151.98:808/hls/4/index.m3u8
 12A5,http://175.154.151.98:808/hls/5/index.m3u8
@@ -305,7 +303,6 @@
 12A56,http://175.154.151.98:808/hls/56/index.m3u8
 12A58,http://175.154.151.98:808/hls/58/index.m3u8
 13A1,http://61.157.139.7:809/hls/1/index.m3u8
-13A2,http://61.157.139.7:809/hls/2/index.m3u8
 13A3,http://61.157.139.7:809/hls/3/index.m3u8
 13A4,http://61.157.139.7:809/hls/4/index.m3u8
 13A5,http://61.157.139.7:809/hls/5/index.m3u8
@@ -364,7 +361,6 @@
 15A15,http://221.2.97.82:809/hls/15/index.m3u8
 15A16,http://221.2.97.82:809/hls/16/index.m3u8
 19A1,http://111.14.186.11:5009/hls/1/index.m3u8
-19A2,http://111.14.186.11:5009/hls/2/index.m3u8
 19A3,http://111.14.186.11:5009/hls/3/index.m3u8
 19A4,http://111.14.186.11:5009/hls/4/index.m3u8
 19A5,http://111.14.186.11:5009/hls/5/index.m3u8
@@ -411,7 +407,6 @@
 19A46,http://111.14.186.11:5009/hls/46/index.m3u8
 20A1,http://123.184.114.90:801/hls/1/index.m3u8
 20A2,http://123.184.114.90:801/hls/2/index.m3u8
-20A3,http://123.184.114.90:801/hls/3/index.m3u8
 20A4,http://123.184.114.90:801/hls/4/index.m3u8
 20A5,http://123.184.114.90:801/hls/5/index.m3u8
 20A6,http://123.184.114.90:801/hls/6/index.m3u8
@@ -427,7 +422,6 @@
 20A16,http://123.184.114.90:801/hls/16/index.m3u8
 20A17,http://123.184.114.90:801/hls/17/index.m3u8
 20A18,http://123.184.114.90:801/hls/18/index.m3u8
-20A19,http://123.184.114.90:801/hls/19/index.m3u8
 20A20,http://123.184.114.90:801/hls/20/index.m3u8
 20A21,http://123.184.114.90:801/hls/21/index.m3u8
 20A22,http://123.184.114.90:801/hls/22/index.m3u8
@@ -545,12 +539,12 @@
 22A16,http://tv.31986666.com:801/hls/16/index.m3u8
 22A17,http://tv.31986666.com:801/hls/17/index.m3u8
 22A18,http://tv.31986666.com:801/hls/18/index.m3u8
-22A19,http://tv.31986666.com:801/hls/19/index.m3u8
 22A20,http://tv.31986666.com:801/hls/20/index.m3u8
 22A21,http://tv.31986666.com:801/hls/21/index.m3u8
 22A22,http://tv.31986666.com:801/hls/22/index.m3u8
 22A23,http://tv.31986666.com:801/hls/23/index.m3u8
 22A24,http://tv.31986666.com:801/hls/24/index.m3u8
+22A25,http://tv.31986666.com:801/hls/25/index.m3u8
 22A26,http://tv.31986666.com:801/hls/26/index.m3u8
 22A27,http://tv.31986666.com:801/hls/27/index.m3u8
 22A28,http://tv.31986666.com:801/hls/28/index.m3u8
@@ -847,7 +841,6 @@
 28A41,http://183.243.90.98:40000/hls/41/index.m3u8
 28A42,http://183.243.90.98:40000/hls/42/index.m3u8
 28A43,http://183.243.90.98:40000/hls/43/index.m3u8
-28A44,http://183.243.90.98:40000/hls/44/index.m3u8
 28A45,http://183.243.90.98:40000/hls/45/index.m3u8
 28A46,http://183.243.90.98:40000/hls/46/index.m3u8
 28A47,http://183.243.90.98:40000/hls/47/index.m3u8
@@ -925,7 +918,6 @@
 33A71,http://bq.ikuai6.com:888/hls/71/index.m3u8
 33A72,http://bq.ikuai6.com:888/hls/72/index.m3u8
 33A73,http://bq.ikuai6.com:888/hls/73/index.m3u8
-33A74,http://bq.ikuai6.com:888/hls/74/index.m3u8
 33A75,http://bq.ikuai6.com:888/hls/75/index.m3u8
 33A76,http://bq.ikuai6.com:888/hls/76/index.m3u8
 33A77,http://bq.ikuai6.com:888/hls/77/index.m3u8
