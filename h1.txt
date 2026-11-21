@@ -69,6 +69,7 @@
 6A24,http://183.11.239.36:808/hls/24/index.m3u8
 6A25,http://183.11.239.36:808/hls/25/index.m3u8
 6A26,http://183.11.239.36:808/hls/26/index.m3u8
+6A27,http://183.11.239.36:808/hls/27/index.m3u8
 6A28,http://183.11.239.36:808/hls/28/index.m3u8
 6A29,http://183.11.239.36:808/hls/29/index.m3u8
 6A30,http://183.11.239.36:808/hls/30/index.m3u8
