@@ -63,7 +63,6 @@
 6A18,http://183.11.239.36:808/hls/18/index.m3u8
 6A19,http://183.11.239.36:808/hls/19/index.m3u8
 6A20,http://183.11.239.36:808/hls/20/index.m3u8
-6A21,http://183.11.239.36:808/hls/21/index.m3u8
 6A22,http://183.11.239.36:808/hls/22/index.m3u8
 6A23,http://183.11.239.36:808/hls/23/index.m3u8
 6A24,http://183.11.239.36:808/hls/24/index.m3u8
@@ -81,7 +80,6 @@
 6A36,http://183.11.239.36:808/hls/36/index.m3u8
 6A37,http://183.11.239.36:808/hls/37/index.m3u8
 6A38,http://183.11.239.36:808/hls/38/index.m3u8
-6A40,http://183.11.239.36:808/hls/40/index.m3u8
 6A41,http://183.11.239.36:808/hls/41/index.m3u8
 6A42,http://183.11.239.36:808/hls/42/index.m3u8
 6A43,http://183.11.239.36:808/hls/43/index.m3u8
@@ -341,7 +339,6 @@
 13A27,http://61.157.139.7:809/hls/27/index.m3u8
 13A28,http://61.157.139.7:809/hls/28/index.m3u8
 13A29,http://61.157.139.7:809/hls/29/index.m3u8
-13A30,http://61.157.139.7:809/hls/30/index.m3u8
 13A31,http://61.157.139.7:809/hls/31/index.m3u8
 13A32,http://61.157.139.7:809/hls/32/index.m3u8
 13A33,http://61.157.139.7:809/hls/33/index.m3u8
